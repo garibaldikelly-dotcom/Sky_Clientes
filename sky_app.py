@@ -7,7 +7,7 @@ def inicializar_directorio():
     """Asegura que el directorio 'data' exista."""
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
-        print(f"Directorio '{DATA_DIR}/' creado.")
+        # No imprimimos nada aquí si se crea para mantener la salida limpia a menos que sea necesario.
 
 def obtener_ruta_archivo(nombre):
     """Retorna la ruta completa del archivo de un cliente."""
@@ -39,13 +39,13 @@ def modificar_cliente(nombre, nuevo_servicio):
     ruta_archivo = obtener_ruta_archivo(nombre)
 
     if not os.path.exists(ruta_archivo):
-        print(f"⚠️ Error: El cliente '{nombre}' no se encontró.")
+        print(f"⚠️ Error: El cliente '{nombre}' no se encontró para modificar.")
         return
 
     try:
         with open(ruta_archivo, 'a') as f:
-            f.write(f"--- Modificación ---\n")
-            f.write(f"Nuevo servicio añadido: {nuevo_servicio}\n")
+            f.write(f"--- Modificación Añadida ---\n")
+            f.write(f"Nuevo servicio: {nuevo_servicio}\n")
         print(f"📝 Servicio '{nuevo_servicio}' añadido al cliente '{nombre}'.")
     except IOError as e:
         print(f"❌ Error al modificar el archivo para '{nombre}': {e}")
@@ -57,14 +57,14 @@ def consultar_cliente(nombre):
     ruta_archivo = obtener_ruta_archivo(nombre)
 
     if not os.path.exists(ruta_archivo):
-        print(f"⚠️ Error: El cliente '{nombre}' no se encontró.")
+        print(f"⚠️ Error: El cliente '{nombre}' no se encontró para consultar.")
         return
 
     try:
         with open(ruta_archivo, 'r') as f:
             contenido = f.read()
             print(f"\n--- Contenido del Archivo de {nombre} ---")
-            print(contenido)
+            print(contenido.strip()) # strip() para limpiar espacios al final
             print("-------------------------------------------\n")
     except IOError as e:
         print(f"❌ Error al leer el archivo para '{nombre}': {e}")
@@ -74,6 +74,7 @@ def listar_clientes():
     Lista los archivos (.txt) en el directorio data/.
     """
     inicializar_directorio()
+    # Filtra solo los archivos que terminan en .txt
     archivos = [f for f in os.listdir(DATA_DIR) if f.endswith(".txt")]
 
     if not archivos:
@@ -82,7 +83,7 @@ def listar_clientes():
 
     print("\n--- Listado de Clientes ---")
     for i, archivo in enumerate(archivos, 1):
-        # Elimina la extensión '.txt' para mostrar solo el nombre del cliente
+        # Muestra el nombre del cliente sin la extensión '.txt'
         nombre_cliente = os.path.splitext(archivo)[0]
         print(f"{i}. {nombre_cliente}")
     print("-----------------------------\n")
