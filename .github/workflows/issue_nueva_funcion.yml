@@ -1,0 +1,22 @@
+name: ✨ Issue - Nueva Función (Feature)
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  triage_nueva_funcion:
+    # Se ejecuta solo si la etiqueta 'Nueva-Funcion' está presente
+    if: |
+      (github.event_name == 'labeled' && github.event.label.name == 'Nueva-Funcion') || 
+      (github.event_name == 'opened' && contains(github.event.issue.labels.*.name, 'Nueva-Funcion'))
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Roadmapping y Estimación
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Nueva Feature)::Se ha solicitado una nueva funcionalidad (Issue #${{ github.event.issue.number }})."
+          echo "::warning title=ACCIÓN REQUERIDA (PRODUCT OWNER)::Iniciar el proceso de **estimación**, definición de requerimientos y Roadmapping. Asignar al Product Owner (PO)."
+          echo "Issue Creado por: ${{ github.event.issue.user.login }}"
+          echo "========================================================================"

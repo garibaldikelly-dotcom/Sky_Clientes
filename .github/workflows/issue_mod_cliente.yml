@@ -1,0 +1,22 @@
+name: ✏️ Issue - Modificación Cliente Existente
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  triage_mod_cliente:
+    # Se ejecuta solo si la etiqueta 'Cliente-Existente' está presente
+    if: |
+      (github.event_name == 'labeled' && github.event.label.name == 'Cliente-Existente') || 
+      (github.event_name == 'opened' && contains(github.event.issue.labels.*.name, 'Cliente-Existente'))
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Contacto y QA
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Modif. Cliente)::Solicitud de modificación de datos de Cliente existente (Issue #${{ github.event.issue.number }})."
+          echo "::warning title=ACCIÓN REQUERIDA (SOPORTE/QA)::Contactar al usuario para validar los cambios requeridos. Una vez realizado, el equipo de QA debe verificar la integridad de los datos."
+          echo "Issue Creado por: ${{ github.event.issue.user.login }}"
+          echo "========================================================================"

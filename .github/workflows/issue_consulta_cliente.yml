@@ -1,0 +1,22 @@
+name: 🔍 Issue - Solicitud de Consulta
+
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  triage_consulta:
+    # Se ejecuta solo si la etiqueta 'Consulta' está presente
+    if: |
+      (github.event_name == 'labeled' && github.event.label.name == 'Consulta') || 
+      (github.event_name == 'opened' && contains(github.event.issue.labels.*.name, 'Consulta'))
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Asignación a Soporte
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Consulta Cliente)::Solicitud de Consulta/Documentación de Cliente (Issue #${{ github.event.issue.number }})."
+          echo "::warning title=ACCIÓN REQUERIDA (SOPORTE)::Revisar la solicitud y preparar la documentación o datos necesarios. Asignar al equipo de Soporte y/o Documentación."
+          echo "Issue Creado por: ${{ github.event.issue.user.login }}"
+          echo "========================================================================"
