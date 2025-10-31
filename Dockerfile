@@ -3,5 +3,4 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY app/ .
-# CMD para iniciar tu aplicación, ej:
-CMD ["python", "clientes_service.py"]
+CMD ["python", "sky_app.py"]
