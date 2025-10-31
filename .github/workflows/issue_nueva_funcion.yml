@@ -1,22 +1,33 @@
-name: ✨ Issue - Nueva Función (Feature)
+name: ✨- Nueva Función (Feature)
 
 on:
-  issues:
-    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_label:
+        description: 'Selecciona la etiqueta de la Issue a procesar'
+        required: true
+        type: choice
+        default: 'Nueva-Funcion'
+        options:
+        - 'Cliente-Nuevo'
+        - 'Cliente-Existente' 
+        - 'Consulta'
+        - 'Mejora'
+        - 'Bugfix'
+        # Solo se ejecuta si coincide con esta etiqueta
+        - 'Nueva-Funcion'
 
 jobs:
   triage_nueva_funcion:
-    # Se ejecuta solo si la etiqueta 'Nueva-Funcion' está presente
-    if: |
-      (github.event_name == 'labeled' && github.event.label.name == 'Nueva-Funcion') || 
-      (github.event_name == 'opened' && contains(github.event.issue.labels.*.name, 'Nueva-Funcion'))
+    # Se ejecuta solo si la entrada del usuario es 'Nueva-Funcion'
+    if: github.event.inputs.issue_label == 'Nueva-Funcion'
     
     runs-on: ubuntu-latest
     steps:
       - name: 💬 Simular Reacción - Roadmapping y Estimación
         run: |
           echo "========================================================================"
-          echo "::notice file=PLANIFICACION.md,title=Asignación (Nueva Feature)::Se ha solicitado una nueva funcionalidad (Issue #${{ github.event.issue.number }})."
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Nueva Feature)::Se ha procesado manualmente una solicitud de nueva funcionalidad."
           echo "::warning title=ACCIÓN REQUERIDA (PRODUCT OWNER)::Iniciar el proceso de **estimación**, definición de requerimientos y Roadmapping. Asignar al Product Owner (PO)."
-          echo "Issue Creado por: ${{ github.event.issue.user.login }}"
+          echo "Etiqueta Seleccionada: ${{ github.event.inputs.issue_label }}"
           echo "========================================================================"

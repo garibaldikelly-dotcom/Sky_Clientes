@@ -1,22 +1,33 @@
-name: ✏️ Issue - Modificación Cliente Existente
+name: ✏️- Modificación Cliente Existente
 
 on:
-  issues:
-    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_label:
+        description: 'Selecciona la etiqueta de la Issue a procesar'
+        required: true
+        type: choice
+        default: 'Bugfix'
+        options:
+        - 'Cliente-Nuevo'
+        - 'Cliente-Existente' 
+        - 'Consulta'
+        - 'Mejora'
+        # Solo se ejecuta si coincide con esta etiqueta
+        - 'Bugfix'
+        - 'Nueva-Funcion'
 
 jobs:
-  triage_mod_cliente:
-    # Se ejecuta solo si la etiqueta 'Cliente-Existente' está presente
-    if: |
-      (github.event_name == 'labeled' && github.event.label.name == 'Cliente-Existente') || 
-      (github.event_name == 'opened' && contains(github.event.issue.labels.*.name, 'Cliente-Existente'))
+  triage_bugfix:
+    # Se ejecuta solo si la entrada del usuario es 'Bugfix'
+    if: github.event.inputs.issue_label == 'Bugfix'
     
     runs-on: ubuntu-latest
     steps:
-      - name: 💬 Simular Reacción - Contacto y QA
+      - name: 💬 Simular Reacción - Revisión de Urgencia y Pruebas
         run: |
           echo "========================================================================"
-          echo "::notice file=PLANIFICACION.md,title=Asignación (Modif. Cliente)::Solicitud de modificación de datos de Cliente existente (Issue #${{ github.event.issue.number }})."
-          echo "::warning title=ACCIÓN REQUERIDA (SOPORTE/QA)::Contactar al usuario para validar los cambios requeridos. Una vez realizado, el equipo de QA debe verificar la integridad de los datos."
-          echo "Issue Creado por: ${{ github.event.issue.user.login }}"
+          echo "::error file=PLANIFICACION.md,title=ASIGNACIÓN URGENTE (BUG)::¡ATENCIÓN! Se ha procesado manualmente un Bug que requiere corrección de código."
+          echo "::warning title=ACCIÓN REQUERIDA (DEV/QA)::Asignar al **Desarrollador Principal** para revisión inmediata. El equipo de QA debe preparar los casos de prueba para verificar el fix."
+          echo "Etiqueta Seleccionada: ${{ github.event.inputs.issue_label }}"
           echo "========================================================================"

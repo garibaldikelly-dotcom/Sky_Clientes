@@ -1,22 +1,33 @@
-name: 🆕 Issue - Alta Nuevo Cliente
+name: 🆕- Alta Nuevo Cliente
 
 on:
-  issues:
-    types: [opened, labeled]
+  workflow_dispatch:
+    inputs:
+      issue_label:
+        description: 'Selecciona la etiqueta de la Issue a procesar'
+        required: true
+        type: choice
+        default: 'Cliente-Nuevo'
+        options:
+        # Solo se ejecuta si coincide con esta etiqueta
+        - 'Cliente-Nuevo'
+        - 'Cliente-Existente' 
+        - 'Consulta'
+        - 'Mejora'
+        - 'Bugfix'
+        - 'Nueva-Funcion'
 
 jobs:
   triage_nuevo_cliente:
-    # Se ejecuta solo si la etiqueta 'Cliente-Nuevo' está presente
-    if: |
-      (github.event_name == 'labeled' && github.event.label.name == 'Cliente-Nuevo') || 
-      (github.event_name == 'opened' && contains(github.event.issue.labels.*.name, 'Cliente-Nuevo'))
+    # Se ejecuta solo si la entrada del usuario es 'Cliente-Nuevo'
+    if: github.event.inputs.issue_label == 'Cliente-Nuevo'
     
     runs-on: ubuntu-latest
     steps:
       - name: 💬 Simular Reacción - Asignación a Back-end
         run: |
           echo "========================================================================"
-          echo "::notice file=PLANIFICACION.md,title=Asignación (Cliente Nuevo)::Se ha detectado una solicitud de Nuevo Cliente (Issue #${{ github.event.issue.number }})."
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Cliente Nuevo)::Se ha procesado manualmente una solicitud de Nuevo Cliente."
           echo "::warning title=ACCIÓN REQUERIDA (EQUIPO BACKEND)::Por favor, revisar el Issue, coordinar la creación del registro y la validación de datos. Asignar al Desarrollador Backend."
-          echo "Issue Creado por: ${{ github.event.issue.user.login }}"
+          echo "Etiqueta Seleccionada: ${{ github.event.inputs.issue_label }}"
           echo "========================================================================"
