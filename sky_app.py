@@ -1,88 +1,144 @@
+import sys
 import os
-
-# Define la ruta del directorio de datos
+import json
+# CONFIGURACIÓN Y RUTAS
 DATA_DIR = "data"
+DATA_FILE = os.path.join(DATA_DIR, "clientes.json")
 
-def inicializar_directorio():
-    """Asegura que el directorio 'data' exista."""
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
-        
-def obtener_ruta_archivo(nombre):
-    """Retorna la ruta completa del archivo de un cliente."""
-    return os.path.join(DATA_DIR, f"{nombre}.txt")
+os.makedirs(DATA_DIR, exist_ok=True)
+if not os.path.exists(DATA_FILE):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump({}, f, ensure_ascii=False, indent=4)
+# FUNCIONES DE GESTIÓN DE CLIENTES
+def cargar_clientes():
+    """Carga los clientes desde el archivo JSON."""
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-def crear_cliente(nombre, servicio):
-    """
-    Crea un archivo (data/nombre.txt) con la información inicial del cliente.
-    """
-    inicializar_directorio()
-    ruta_archivo = obtener_ruta_archivo(nombre)
+def guardar_clientes(clientes):
+    """Guarda los clientes en el archivo JSON."""
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(clientes, f, ensure_ascii=False, indent=4)
 
-    if os.path.exists(ruta_archivo):
-        print(f"⚠️ Error: El cliente '{nombre}' ya existe.")
+def crear_cliente(nombre, correo, telefono, servicio):
+    """Crea un nuevo cliente y lo guarda en el archivo."""
+    clientes = cargar_clientes()
+    if nombre in clientes:
+        print(f"⚠️ El cliente '{nombre}' ya existe.")
         return
-
-    try:
-        with open(ruta_archivo, 'w') as f:
-            f.write(f"--- Cliente: {nombre} ---\n")
-            f.write(f"Servicio inicial: {servicio}\n")
-        print(f"✅ Cliente '{nombre}' creado con el servicio '{servicio}'.")
-    except IOError as e:
-        print(f"❌ Error al crear el archivo para '{nombre}': {e}")
+    clientes[nombre] = {
+        "correo": correo,
+        "telefono": telefono,
+        "servicio": servicio
+    }
+    guardar_clientes(clientes)
+    print(f"✅ Cliente '{nombre}' creado correctamente.")
 
 def modificar_cliente(nombre, nuevo_servicio):
-    """
-    Busca el archivo y agrega la descripción del nuevo servicio.
-    """
-    ruta_archivo = obtener_ruta_archivo(nombre)
-
-    if not os.path.exists(ruta_archivo):
-        print(f"⚠️ Error: El cliente '{nombre}' no se encontró para modificar.")
+    """Modifica el servicio de un cliente existente."""
+    clientes = cargar_clientes()
+    if nombre not in clientes:
+        print(f"❌ El cliente '{nombre}' no existe.")
         return
-
-    try:
-        with open(ruta_archivo, 'a') as f:
-            f.write(f"--- Modificación Añadida ---\n")
-            f.write(f"Nuevo servicio: {nuevo_servicio}\n")
-        print(f"📝 Servicio '{nuevo_servicio}' añadido al cliente '{nombre}'.")
-    except IOError as e:
-        print(f"❌ Error al modificar el archivo para '{nombre}': {e}")
+    clientes[nombre]["servicio"] = nuevo_servicio
+    guardar_clientes(clientes)
+    print(f"✅ Servicio de '{nombre}' actualizado a '{nuevo_servicio}'.")
 
 def consultar_cliente(nombre):
-    """
-    Lee y muestra el contenido del archivo de un cliente.
-    """
-    ruta_archivo = obtener_ruta_archivo(nombre)
-
-    if not os.path.exists(ruta_archivo):
-        print(f"⚠️ Error: El cliente '{nombre}' no se encontró para consultar.")
+    """Muestra la información de un cliente."""
+    clientes = cargar_clientes()
+    if nombre not in clientes:
+        print(f"❌ El cliente '{nombre}' no existe.")
         return
-
-    try:
-        with open(ruta_archivo, 'r') as f:
-            contenido = f.read()
-            print(f"\n--- Contenido del Archivo de {nombre} ---")
-            print(contenido.strip()) # strip() para limpiar espacios al final
-            print("-------------------------------------------\n")
-    except IOError as e:
-        print(f"❌ Error al leer el archivo para '{nombre}': {e}")
+    datos = clientes[nombre]
+    print("\n📋 Información del cliente:")
+    print(f"  Nombre: {nombre}")
+    print(f"  Correo: {datos['correo']}")
+    print(f"  Teléfono: {datos['telefono']}")
+    print(f"  Servicio: {datos['servicio']}")
 
 def listar_clientes():
-    """
-    Lista los archivos (.txt) en el directorio data/.
-    """
-    inicializar_directorio()
-    # Filtra solo los archivos que terminan en .txt
-    archivos = [f for f in os.listdir(DATA_DIR) if f.endswith(".txt")]
-
-    if not archivos:
-        print(f"ℹ️ No se encontraron clientes en el directorio '{DATA_DIR}/'.")
+    """Lista todos los clientes registrados."""
+    clientes = cargar_clientes()
+    if not clientes:
+        print("📂 No hay clientes registrados.")
         return
+    print("\n📜 LISTA DE CLIENTES:")
+    for nombre, datos in clientes.items():
+        print(f"- {nombre} | {datos['correo']} | {datos['telefono']} | Servicio: {datos['servicio']}")
 
-    print("\n--- Listado de Clientes ---")
-    for i, archivo in enumerate(archivos, 1):
-        # Muestra el nombre del cliente sin la extensión '.txt'
-        nombre_cliente = os.path.splitext(archivo)[0]
-        print(f"{i}. {nombre_cliente}")
-    print("-----------------------------\n")
+def eliminar_cliente(nombre):
+    """Elimina un cliente del registro."""
+    clientes = cargar_clientes()
+    if nombre not in clientes:
+        print(f"❌ El cliente '{nombre}' no existe.")
+        return
+    del clientes[nombre]
+    guardar_clientes(clientes)
+    print(f"🗑️ Cliente '{nombre}' eliminado correctamente.")
+# INTERFAZ DE MENÚ
+def mostrar_menu():
+    """Muestra las opciones del menú."""
+    print("\n" + "=" * 45)
+    print("  MENÚ DE GESTIÓN DE CLIENTES (SKY APP)")
+    print("=" * 45)
+    print("1. Crear nuevo cliente")
+    print("2. Modificar servicio de cliente")
+    print("3. Consultar información de cliente")
+    print("4. Listar todos los clientes")
+    print("5. Eliminar cliente")
+    print("6. Salir")
+    print("-" * 45)
+
+def obtener_nombre_cliente():
+    """Pide y retorna el nombre del cliente con validación básica."""
+    while True:
+        nombre = input("▶️  Ingrese el nombre del cliente: ").strip()
+        if nombre:
+            return nombre
+        print("❌ El nombre no puede estar vacío.")
+# FUNCIÓN PRINCIPAL
+def main():
+    """Función principal para la ejecución del menú."""
+    while True:
+        mostrar_menu()
+        opcion = input("Seleccione una opción (1-6): ").strip()
+
+        if opcion == '1':
+            print("\n--- CREAR CLIENTE ---")
+            nombre = obtener_nombre_cliente()
+            correo = input("Ingrese el correo del cliente: ").strip()
+            telefono = input("Ingrese el teléfono del cliente: ").strip()
+            servicio = input("Ingrese el servicio contratado: ").strip()
+            crear_cliente(nombre, correo, telefono, servicio)
+
+        elif opcion == '2':
+            print("\n--- MODIFICAR SERVICIO ---")
+            nombre = obtener_nombre_cliente()
+            nuevo_servicio = input("Ingrese el nuevo servicio: ").strip()
+            modificar_cliente(nombre, nuevo_servicio)
+
+        elif opcion == '3':
+            print("\n--- CONSULTAR CLIENTE ---")
+            nombre = obtener_nombre_cliente()
+            consultar_cliente(nombre)
+
+        elif opcion == '4':
+            print("\n--- LISTADO DE CLIENTES ---")
+            listar_clientes()
+
+        elif opcion == '5':
+            print("\n--- ELIMINAR CLIENTE ---")
+            nombre = obtener_nombre_cliente()
+            eliminar_cliente(nombre)
+
+        elif opcion == '6':
+            print("\n👋 ¡Gracias por usar la aplicación de gestión de clientes! Saliendo...")
+            break
+
+        else:
+            print("❌ Opción no válida. Por favor, ingrese un número del 1 al 6.")
+
+# PUNTO DE ENTRADA
+if __name__ == "__main__":
+    main()
