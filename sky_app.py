@@ -7,8 +7,7 @@ def inicializar_directorio():
     """Asegura que el directorio 'data' exista."""
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
-        # No imprimimos nada aquí si se crea para mantener la salida limpia a menos que sea necesario.
-
+        
 def obtener_ruta_archivo(nombre):
     """Retorna la ruta completa del archivo de un cliente."""
     return os.path.join(DATA_DIR, f"{nombre}.txt")
