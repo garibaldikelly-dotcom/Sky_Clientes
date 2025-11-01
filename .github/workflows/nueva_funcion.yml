@@ -1,0 +1,20 @@
+name: ✨- Nueva Función (Feature)
+
+on:
+  workflow_dispatch:
+    inputs:
+      nombre_feature:
+        description: 'Nombre de la nueva funcionalidad solicitada'
+        required: true
+
+jobs:
+  simular_proceso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Roadmapping y Estimación (Manual)
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Nueva Feature - Manual)::Nueva Feature: ${{ github.event.inputs.nombre_feature }} solicitada."
+          echo "::warning title=ACCIÓN REQUERIDA (PRODUCT OWNER)::Iniciar el proceso de **estimación**, definición de requerimientos y Roadmapping. Asignar al Product Owner (PO)."
+          echo "Disparado por: ${{ github.actor }}"
+          echo "========================================================================"

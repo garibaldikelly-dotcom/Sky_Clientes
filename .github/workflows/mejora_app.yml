@@ -1,0 +1,20 @@
+name: 📈- Mejora a la Aplicación
+
+on:
+  workflow_dispatch:
+    inputs:
+      area_mejora:
+        description: 'Área de la aplicación a mejorar'
+        required: true
+
+jobs:
+  simular_proceso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Evaluación de Impacto (Manual)
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Mejora App - Manual)::Se ha iniciado una solicitud de Mejora en el área: ${{ github.event.inputs.area_mejora }}."
+          echo "::warning title=ACCIÓN REQUERIDA (ANALISTA)::Realizar una **Evaluación de Impacto** y priorización de la mejora. Asignar al Analista de Negocio (BA)."
+          echo "Disparado por: ${{ github.actor }}"
+          echo "========================================================================"

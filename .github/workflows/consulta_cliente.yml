@@ -1,0 +1,20 @@
+name: 🔍- Solicitud de Consulta
+
+on:
+  workflow_dispatch:
+    inputs:
+      consulta_tema:
+        description: 'Tema de la consulta (Ej. Histórico de pedidos)'
+        required: true
+
+jobs:
+  simular_proceso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Asignación a Soporte (Manual)
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Consulta Cliente - Manual)::Solicitud de Consulta sobre: ${{ github.event.inputs.consulta_tema }}."
+          echo "::warning title=ACCIÓN REQUERIDA (SOPORTE)::Revisar la solicitud y preparar la documentación o datos necesarios. Asignar al equipo de Soporte."
+          echo "Disparado por: ${{ github.actor }}"
+          echo "========================================================================"

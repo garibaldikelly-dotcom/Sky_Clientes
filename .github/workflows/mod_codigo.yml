@@ -1,0 +1,24 @@
+name: 🐞- Modificación de Código (Bugfix)
+
+on:
+  workflow_dispatch:
+    inputs:
+      bug_id:
+        description: 'ID del Bug a corregir (Ej. BFX-101)'
+        required: true
+      urgencia:
+        description: 'Nivel de urgencia (CRÍTICO/MEDIO/BAJO)'
+        required: true
+        default: 'CRÍTICO'
+
+jobs:
+  simular_proceso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Revisión de Urgencia y Pruebas (Manual)
+        run: |
+          echo "========================================================================"
+          echo "::error file=PLANIFICACION.md,title=ASIGNACIÓN URGENTE (BUG - Manual)::¡ATENCIÓN! Bug #${{ github.event.inputs.bug_id }} requiere corrección URGENTE. Nivel: ${{ github.event.inputs.urgencia }}."
+          echo "::warning title=ACCIÓN REQUERIDA (DEV/QA)::Asignar al **Desarrollador Principal** para revisión inmediata. El equipo de QA debe preparar los casos de prueba."
+          echo "Disparado por: ${{ github.actor }}"
+          echo "========================================================================"

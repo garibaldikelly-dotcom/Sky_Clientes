@@ -1,0 +1,23 @@
+name: ✏️- Modificación Cliente Existente
+
+on:
+  workflow_dispatch:
+    inputs:
+      cliente_id:
+        description: 'ID del Cliente a modificar'
+        required: true
+      cambios:
+        description: 'Descripción de los cambios a realizar'
+        required: false
+
+jobs:
+  simular_proceso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 💬 Simular Reacción - Contacto y QA (Manual)
+        run: |
+          echo "========================================================================"
+          echo "::notice file=PLANIFICACION.md,title=Asignación (Modif. Cliente - Manual)::Solicitud de modificación de Cliente: ${{ github.event.inputs.cliente_id }}."
+          echo "::warning title=ACCIÓN REQUERIDA (SOPORTE/QA)::Validar cambios (Descripción: ${{ github.event.inputs.cambios }}). Contactar al usuario y verificar integridad de datos."
+          echo "Disparado por: ${{ github.actor }}"
+          echo "========================================================================"
