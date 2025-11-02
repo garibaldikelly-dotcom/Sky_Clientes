@@ -1,0 +1,13 @@
+[Unit]
+Description= Sky Clientes App Personalizada  # Una breve descripción
+After=network.target                  # Asegura que la red esté activa antes de iniciar
+
+[Service]
+ExecStart=/bin/bash /home/ec2-user/Sky_Clientes/run_app.sh # El comando real para iniciar tu aplicación
+WorkingDirectory=/home/ec2-user/Sky_Clientes  # (Opcional) Directorio de trabajo
+User=ec2-user                            # (Opcional) Usuario bajo el que se ejecutará (evita root)
+Restart=always                            # (Opcional) Define si el servicio debe reiniciarse al fallar
+Type=simple                               # (Común) Tipo de ejecución (simple, forking, oneshot, etc.)
+
+[Install]
+WantedBy=multi-user.target             # Especifica el "target" de arranque con el que se asocia
